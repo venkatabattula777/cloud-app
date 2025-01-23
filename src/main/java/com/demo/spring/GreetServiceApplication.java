@@ -5,9 +5,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @SpringBootApplication
-@Controller
+@RestController
 @RequestMapping("/api")
 public class GreetServiceApplication {
 
@@ -15,7 +16,7 @@ public class GreetServiceApplication {
 		SpringApplication.run(GreetServiceApplication.class, args);
 	}
 
-	@GetMapping("/greet")
+	@GetMapping(path="/greet")
 	public String greet() {
 		return "If you see me, you have done it!!";
 	}
