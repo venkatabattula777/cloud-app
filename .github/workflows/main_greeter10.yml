@@ -18,10 +18,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Java version
+      - name: Set up ` version
         uses: actions/setup-java@v4
         with:
-          java-version: 'java21'
+          java-version: '21'
           distribution: 'microsoft'
 
       - name: Build with Maven
