@@ -10,27 +10,16 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
+
 - task: JavaToolInstaller@1
   inputs:
     versionSpec: '21'
     jdkArchitectureOption: 'x64'
-    jdkSourceOption: 'AzureStorage'
-    azureResourceManagerEndpoint: 'Pay-As-You-Go(1a4fd15f-e4d8-46a6-a2b9-43b0b207b218)'
-    cleanDestinationDirectory: true
-- task: Maven@3
-  inputs:
-    mavenPomFile: 'pom.xml'
-    mavenOptions: '-Xmx3072m'
-    javaHomeOption: 'JDKVersion'
-    jdkVersionOption: '1.11'
-    jdkArchitectureOption: 'x64'
-    publishJUnitResults: true
-    testResultsFiles: '**/surefire-reports/TEST-*.xml'
-    goals: 'package'
+    jdkSourceOption: 'PreInstalled'
 
 - task: Maven@4
   inputs:
-    azureSubscription: 'Pay-As-You-Go(1)(1a4fd15f-e4d8-46a6-a2b9-43b0b207b218)'
+    azureSubscription: 'Pay-As-You-Go(1a4fd15f-e4d8-46a6-a2b9-43b0b207b218)'
     mavenPomFile: 'pom.xml'
     publishJUnitResults: true
     testResultsFiles: '**/surefire-reports/TEST-*.xml'
@@ -39,3 +28,16 @@ steps:
     mavenAuthenticateFeed: false
     effectivePomSkip: false
     sonarQubeRunAnalysis: false
+- task: Docker@2
+  inputs:
+    containerRegistry: 'venkat-registry'
+    repository: 'cloud-app'
+    command: 'buildAndPush'
+    Dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
+- task: KubernetesManifest@1
+  inputs:
+    action: 'deploy'
+    connectionType: 'kubernetesServiceConnection'
+    kubernetesServiceConnection: 'venkat-aks-connection'
+    namespace: 'default'
+    manifests: '$(Build.SourcesDirectory)/deployment.yaml'
